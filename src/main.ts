@@ -5,14 +5,16 @@ import Matter from 'matter-js';
 import { GAME_BACKGROUND_COLOR } from './config/game.config';
 import { GameScene } from './game/scenes/game-scene';
 
-const app = new PIXI.Application();
-const engine = Matter.Engine.create();
+(async () => {
+  const app = new PIXI.Application();
+  const engine = Matter.Engine.create();
 
-await app.init({ background: GAME_BACKGROUND_COLOR, resizeTo: window });
-document.body.appendChild(app.canvas);
+  await app.init({ background: GAME_BACKGROUND_COLOR, resizeTo: window });
+  document.body.appendChild(app.canvas);
 
-app.ticker.add((ticker) => {
-  Matter.Engine.update(engine, ticker.deltaMS);
-});
+  app.ticker.add((ticker) => {
+    Matter.Engine.update(engine, ticker.deltaMS);
+  });
 
-new GameScene(app, engine);
+  new GameScene(app, engine);
+})();
