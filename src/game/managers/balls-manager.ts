@@ -1,9 +1,16 @@
 import * as PIXI from 'pixi.js';
 
-import { Ball } from './ball';
-import { GameContainer } from './game-container';
+import { GameContainer } from '~/core/engine/game-container';
+import { Ball } from '~/game/objects/ball';
+import { randomPick } from '~/utils/random-pick';
 
 export class BallsManager {
+  static readonly ballVariants = [
+    { color: 0xeb2a2a, scale: 1 },
+    { color: 0x2aeb37, scale: 1.5 },
+    { color: 0x2a6deb, scale: 2 },
+  ];
+
   private currentBall: Ball | null = null;
   private balls: Map<string, Ball> = new Map();
   private cursorX = -1000;
@@ -56,7 +63,16 @@ export class BallsManager {
   }
 
   private generateRandomBall(): Ball {
-    const newBall = new Ball(this.app, this.engine, 0xeb2a2a, 1, this.cursorX, true);
+    const randomVariant = randomPick(BallsManager.ballVariants);
+
+    const newBall = new Ball(
+      this.app,
+      this.engine,
+      randomVariant.color,
+      randomVariant.scale,
+      this.cursorX,
+      true,
+    );
     this.gameContainer.addObject(newBall);
 
     return newBall;

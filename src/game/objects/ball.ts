@@ -1,8 +1,9 @@
 import * as PIXI from 'pixi.js';
+
 import Matter from 'matter-js';
 import { v4 as uuidv4 } from 'uuid';
 
-import { GameObject } from './game-object';
+import { GameObject } from '~/core/abstract/game-object';
 
 export class Ball extends GameObject {
   private graphics: PIXI.Graphics;

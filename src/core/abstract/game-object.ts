@@ -1,5 +1,7 @@
 import * as PIXI from 'pixi.js';
+
 import Matter from 'matter-js';
+
 import { Entity } from './entity';
 
 export abstract class GameObject extends Entity {

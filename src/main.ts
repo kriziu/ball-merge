@@ -1,8 +1,9 @@
 import * as PIXI from 'pixi.js';
 
-import { GameContainer } from './entities/game-container';
 import Matter from 'matter-js';
-import { BallsManager } from './entities/balls-manager';
+
+import { GameContainer } from '~/core/engine/game-container';
+import { BallsManager } from '~/game/managers/balls-manager';
 
 const app = new PIXI.Application();
 const engine = Matter.Engine.create();

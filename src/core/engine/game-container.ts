@@ -1,7 +1,9 @@
 import * as PIXI from 'pixi.js';
-import { Entity } from './entity';
+
 import Matter from 'matter-js';
-import { GameObject } from './game-object';
+
+import { Entity } from '~/core/abstract/entity';
+import { GameObject } from '~/core/abstract/game-object';
 
 export class GameContainer extends Entity {
   readonly size = 1000;
