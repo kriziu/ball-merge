@@ -1,9 +1,9 @@
 import * as PIXI from 'pixi.js';
 import { Entity } from './entity';
 import Matter from 'matter-js';
-import { Ball } from './ball';
+import { GameObject } from './game-object';
 
-export class BallsContainer extends Entity {
+export class GameContainer extends Entity {
   readonly size = 1000;
   readonly strokeWidth = 4;
   readonly wallWidth = 100;
@@ -12,7 +12,6 @@ export class BallsContainer extends Entity {
   private container = new PIXI.Container();
   private graphics = new PIXI.Graphics();
   private offset: { x: number; y: number } = { x: 0, y: 0 };
-  private balls: Ball[] = [];
 
   constructor(
     protected app: PIXI.Application,
@@ -23,30 +22,26 @@ export class BallsContainer extends Entity {
     this.container.addChild(this.graphics);
     this.app.stage.addChild(this.container);
 
-    this.calculateAndDrawBoundaries();
     this.createPhysicsBoundaries();
+    this.calculateAndDrawBoundaries();
   }
 
   update(): void {
     this.calculateAndDrawBoundaries();
   }
 
-  addBall(ball: Ball): void {
-    this.balls.push(ball);
-    this.container.addChild(ball.getDisplayObject());
-    Matter.Composite.add(this.engine.world, ball.getBody());
+  addObject(object: GameObject): void {
+    this.container.addChild(object.getDisplayObject());
+    Matter.Composite.add(this.engine.world, object.getBody());
   }
 
-  private calculateAndDrawBoundaries(): void {
-    const calculatedOffset = this.calculateOffset();
-    if (this.offset.x === calculatedOffset.x && this.offset.y === calculatedOffset.y) {
-      return;
-    }
+  removeObject(object: GameObject): void {
+    this.container.removeChild(object.getDisplayObject());
+    Matter.Composite.remove(this.engine.world, object.getBody());
+  }
 
-    this.offset = calculatedOffset;
-    this.container.position.set(this.offset.x, this.offset.y);
-
-    this.drawBoundaries();
+  getContainer(): PIXI.Container {
+    return this.container;
   }
 
   private createPhysicsBoundaries(): void {
@@ -82,9 +77,23 @@ export class BallsContainer extends Entity {
     Matter.Composite.add(this.engine.world, walls);
   }
 
+  private calculateAndDrawBoundaries(): void {
+    const calculatedOffset = this.calculateOffset();
+    if (this.offset.x === calculatedOffset.x && this.offset.y === calculatedOffset.y) {
+      return;
+    }
+
+    this.offset = calculatedOffset;
+    this.container.position.set(this.offset.x, this.offset.y);
+
+    this.drawBoundaries();
+  }
+
   private drawBoundaries(): void {
     this.graphics
       .clear()
+      .rect(0, 0, this.size, this.size)
+      .fill({ color: 0x000000 })
       .moveTo(0, 0)
       .lineTo(0, this.size)
       .lineTo(this.size, this.size)
