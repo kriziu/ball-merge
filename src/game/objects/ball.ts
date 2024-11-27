@@ -3,12 +3,13 @@ import * as PIXI from 'pixi.js';
 import Matter from 'matter-js';
 import { v4 as uuidv4 } from 'uuid';
 
+import { BALL_RADIUS } from '~/config/game.config';
 import { GameObject } from '~/core/abstract/game-object';
 
 export class Ball extends GameObject {
   private graphics: PIXI.Graphics;
   private body: Matter.Body;
-  private radius: number = 20;
+  private radius: number = BALL_RADIUS;
 
   readonly id: string = uuidv4();
 
@@ -40,7 +41,6 @@ export class Ball extends GameObject {
   }
 
   destroy(): void {
-    Matter.Composite.remove(this.engine.world, this.body);
     this.graphics.destroy();
   }
 
