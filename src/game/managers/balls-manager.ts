@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 
 import Matter from 'matter-js';
 
+import { BallsCollisionsManager } from './balls-collisions-manager';
 import { BALL_RADIUS, BALL_VARIANTS, BALL_VARIANTS_LIMIT, GAME_SIZE } from '~/config/game.config';
 import { InputManager } from '~/core/input/input-manager';
 import { Ball } from '~/game/objects/ball';
@@ -10,7 +11,7 @@ import { randomPick } from '~/utils/random-pick';
 export class BallsManager {
   private inputManager: InputManager;
   private currentBall: Ball | null = null;
-  private balls: Map<string, Ball> = new Map();
+  private balls = new Set<Ball>();
   private cursorX = -1000;
 
   constructor(
@@ -18,10 +19,28 @@ export class BallsManager {
     private engine: Matter.Engine,
     private container: PIXI.Container,
   ) {
+    new BallsCollisionsManager(this.app, this.engine, this);
+
     this.inputManager = new InputManager(this.container);
     this.setupInputs();
 
     this.currentBall = this.generateRandomBall();
+  }
+
+  getBalls(): Set<Ball> {
+    return this.balls;
+  }
+
+  addBall(ball: Ball): void {
+    this.balls.add(ball);
+    this.container.addChild(ball.getDisplayObject());
+    Matter.Composite.add(this.engine.world, ball.getBody());
+  }
+
+  removeBall(ball: Ball): void {
+    this.balls.delete(ball);
+    this.container.removeChild(ball.getDisplayObject());
+    Matter.Composite.remove(this.engine.world, ball.getBody());
   }
 
   private setupInputs(): void {
@@ -63,18 +82,6 @@ export class BallsManager {
     this.addBall(ballToDrop);
     this.removeBall(this.currentBall);
     this.currentBall = this.generateRandomBall();
-  }
-
-  private addBall(ball: Ball): void {
-    this.balls.set(ball.id, ball);
-    this.container.addChild(ball.getDisplayObject());
-    Matter.Composite.add(this.engine.world, ball.getBody());
-  }
-
-  private removeBall(ball: Ball): void {
-    this.balls.delete(ball.id);
-    this.container.removeChild(ball.getDisplayObject());
-    Matter.Composite.remove(this.engine.world, ball.getBody());
   }
 
   private generateRandomBall(): Ball {

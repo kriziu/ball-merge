@@ -25,8 +25,9 @@ export class Ball extends GameObject {
 
     this.graphics = new PIXI.Graphics({ x });
     this.body = Matter.Bodies.circle(isStatic ? -1000 : x, 0, this.radius * scale, {
-      restitution: 0.8,
-      friction: 0.005,
+      restitution: 0.4,
+      friction: 0.007,
+      mass: scale,
     });
     Matter.Body.setStatic(this.body, isStatic);
 
