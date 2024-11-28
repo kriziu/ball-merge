@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 
 import Matter from 'matter-js';
 
-import { GAME_BACKGROUND_COLOR } from './config/game.config';
+import { GAME_BACKGROUND_COLOR, GAME_CONFIG } from './config/game.config';
 import { GameScene } from './game/scenes/game-scene';
 
 (async () => {
@@ -18,5 +18,5 @@ import { GameScene } from './game/scenes/game-scene';
     Matter.Engine.update(engine, ticker.deltaMS);
   });
 
-  new GameScene(app, engine);
+  new GameScene(app, engine, GAME_CONFIG);
 })();

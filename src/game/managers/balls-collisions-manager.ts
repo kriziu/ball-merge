@@ -4,14 +4,14 @@ import Matter from 'matter-js';
 
 import { BallsManager } from './balls-manager';
 import { Ball } from '../objects/ball';
-import { BALL_VARIANTS } from '~/config/game.config';
-import { BallVariant } from '~/types/game.types';
+import { BallVariant, GameConfig } from '~/types/game.types';
 
 export class BallsCollisionsManager {
   constructor(
-    private app: PIXI.Application,
+    protected app: PIXI.Application,
     private engine: Matter.Engine,
     private ballsManager: BallsManager,
+    private config: GameConfig,
   ) {
     this.setupCollisionDetection();
   }
@@ -66,7 +66,7 @@ export class BallsCollisionsManager {
 
       const newBall = new Ball(
         this.app,
-        this.engine,
+        this.config,
         nextVariant.color,
         nextVariant.scale,
         position.x,
@@ -80,7 +80,9 @@ export class BallsCollisionsManager {
   }
 
   private getNextVariant(currentScale: number): BallVariant | null {
-    const currentIndex = BALL_VARIANTS.findIndex((variant) => variant.scale === currentScale);
-    return BALL_VARIANTS[currentIndex + 1] ?? null;
+    const currentIndex = this.config.ballVariants.findIndex(
+      (variant) => variant.scale === currentScale,
+    );
+    return this.config.ballVariants[currentIndex + 1] ?? null;
   }
 }

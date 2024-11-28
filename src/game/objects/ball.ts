@@ -3,30 +3,28 @@ import * as PIXI from 'pixi.js';
 import Matter from 'matter-js';
 import { v4 as uuidv4 } from 'uuid';
 
-import { BALL_RADIUS, BALL_STROKE_WIDTH } from '~/config/game.config';
 import { GameObject } from '~/core/abstract/game-object';
+import { GameConfig } from '~/types/game.types';
 import { darkenColor } from '~/utils/darken-color';
 
 export class Ball extends GameObject {
   private graphics: PIXI.Graphics;
   private body: Matter.Body;
-  private radius: number = BALL_RADIUS;
-  private strokeWidth: number = BALL_STROKE_WIDTH;
 
   readonly id: string = uuidv4();
 
   constructor(
     protected app: PIXI.Application,
-    protected engine: Matter.Engine,
+    private config: GameConfig,
     private color: number,
-    private scale: number = 1,
+    private scale: number,
     x: number,
     isStatic = false,
   ) {
     super(app);
 
     this.graphics = new PIXI.Graphics({ x });
-    this.body = Matter.Bodies.circle(isStatic ? -1000 : x, 0, this.radius * scale, {
+    this.body = Matter.Bodies.circle(isStatic ? -1000 : x, 0, this.config.ballRadius * scale, {
       restitution: 0.4,
       friction: 0.007,
       mass: scale,
@@ -68,9 +66,9 @@ export class Ball extends GameObject {
 
     this.graphics
       .clear()
-      .circle(0, 0, this.radius - this.strokeWidth / this.scale / 2)
+      .circle(0, 0, this.config.ballRadius - this.config.ballStrokeWidth / this.scale / 2)
       .fill({ color: this.color })
-      .stroke({ color: strokeColor, width: this.strokeWidth / this.scale })
+      .stroke({ color: strokeColor, width: this.config.ballStrokeWidth / this.scale })
       .scale.set(this.scale);
   }
 }

@@ -3,9 +3,10 @@ import * as PIXI from 'pixi.js';
 import Matter from 'matter-js';
 
 import { BallsCollisionsManager } from './balls-collisions-manager';
-import { BALL_RADIUS, BALL_VARIANTS, BALL_VARIANTS_LIMIT, GAME_SIZE } from '~/config/game.config';
+import { DropIndicator } from '../components/drop-indicator';
 import { InputManager } from '~/core/input/input-manager';
 import { Ball } from '~/game/objects/ball';
+import { GameConfig } from '~/types/game.types';
 import { randomPick } from '~/utils/random-pick';
 
 export class BallsManager {
@@ -13,17 +14,20 @@ export class BallsManager {
   private currentBall: Ball | null = null;
   private balls = new Set<Ball>();
   private cursorX = -1000;
+  private dropIndicator: DropIndicator;
 
   constructor(
-    private app: PIXI.Application,
+    protected app: PIXI.Application,
     private engine: Matter.Engine,
+    private config: GameConfig,
     private container: PIXI.Container,
   ) {
-    new BallsCollisionsManager(this.app, this.engine, this);
+    new BallsCollisionsManager(this.app, this.engine, this, this.config);
 
     this.inputManager = new InputManager(this.container);
     this.setupInputs();
 
+    this.dropIndicator = new DropIndicator(this.app, this.container, this.config);
     this.currentBall = this.generateRandomBall();
   }
 
@@ -48,6 +52,7 @@ export class BallsManager {
       if (this.currentBall) {
         this.cursorX = this.boundX(x);
         this.currentBall.getDisplayObject().x = this.cursorX;
+        this.dropIndicator.setX(this.cursorX);
       }
     });
 
@@ -61,8 +66,8 @@ export class BallsManager {
       return x;
     }
 
-    const ballRadius = (scale ?? this.currentBall.getParams().scale) * BALL_RADIUS;
-    return Math.min(Math.max(x, ballRadius), GAME_SIZE - ballRadius);
+    const ballRadius = (scale ?? this.currentBall.getParams().scale) * this.config.ballRadius;
+    return Math.min(Math.max(x, ballRadius), this.config.size - ballRadius);
   }
 
   private dropCurrentBall(): void {
@@ -73,7 +78,7 @@ export class BallsManager {
     const currentBallParams = this.currentBall.getParams();
     const ballToDrop = new Ball(
       this.app,
-      this.engine,
+      this.config,
       currentBallParams.color,
       currentBallParams.scale,
       this.cursorX,
@@ -85,13 +90,16 @@ export class BallsManager {
   }
 
   private generateRandomBall(): Ball {
-    const randomVariant = randomPick(BALL_VARIANTS, BALL_VARIANTS_LIMIT);
+    const randomVariant = randomPick(
+      this.config.ballVariants,
+      this.config.ballVariantsRandomIndexLimit,
+    );
 
     this.cursorX = this.boundX(this.cursorX, randomVariant.scale);
 
     const newBall = new Ball(
       this.app,
-      this.engine,
+      this.config,
       randomVariant.color,
       randomVariant.scale,
       this.cursorX,

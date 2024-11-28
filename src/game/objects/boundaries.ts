@@ -2,13 +2,7 @@ import * as PIXI from 'pixi.js';
 
 import Matter from 'matter-js';
 
-import {
-  BALL_RADIUS,
-  BOUNDARY_STROKE_COLOR,
-  BOUNDARY_STROKE_WIDTH,
-  GAME_BACKGROUND_COLOR,
-  GAME_SIZE,
-} from '~/config/game.config';
+import { GameConfig } from '~/types/game.types';
 
 export class Boundaries {
   private graphics = new PIXI.Graphics();
@@ -16,12 +10,8 @@ export class Boundaries {
 
   constructor(
     private engine: Matter.Engine,
+    private config: GameConfig,
     private container: PIXI.Container,
-    private size: number = GAME_SIZE,
-    // We do this to make sure the ball can't get stuck in the wall
-    private wallWidth: number = BALL_RADIUS,
-    private strokeWidth: number = BOUNDARY_STROKE_WIDTH,
-    private strokeColor: number = BOUNDARY_STROKE_COLOR,
   ) {
     this.container.addChild(this.graphics);
     this.createPhysicsBoundaries();
@@ -30,28 +20,28 @@ export class Boundaries {
 
   private createPhysicsBoundaries(): void {
     const bottomWall = Matter.Bodies.rectangle(
-      this.size / 2,
-      this.size + this.wallWidth / 2,
-      this.size,
-      this.wallWidth,
+      this.config.size / 2,
+      this.config.size + this.config.boundaryStrokeWidth / 2,
+      this.config.size,
+      this.config.boundaryStrokeWidth,
       {
         isStatic: true,
       },
     );
     const leftWall = Matter.Bodies.rectangle(
-      -this.wallWidth / 2,
-      this.size / 2,
-      this.wallWidth,
-      this.size,
+      -this.config.boundaryStrokeWidth / 2,
+      this.config.size / 2,
+      this.config.boundaryStrokeWidth,
+      this.config.size,
       {
         isStatic: true,
       },
     );
     const rightWall = Matter.Bodies.rectangle(
-      this.size + this.wallWidth / 2,
-      this.size / 2,
-      this.wallWidth,
-      this.size,
+      this.config.size + this.config.boundaryStrokeWidth / 2,
+      this.config.size / 2,
+      this.config.boundaryStrokeWidth,
+      this.config.size,
       {
         isStatic: true,
       },
@@ -65,19 +55,28 @@ export class Boundaries {
     this.graphics
       .clear()
       .rect(
-        -this.strokeWidth / 2,
-        -this.strokeWidth / 2,
-        this.size + this.strokeWidth,
-        this.size + this.strokeWidth,
+        -this.config.boundaryStrokeWidth / 2,
+        -this.config.boundaryStrokeWidth / 2,
+        this.config.size + this.config.boundaryStrokeWidth,
+        this.config.size + this.config.boundaryStrokeWidth,
       )
-      .fill({ color: GAME_BACKGROUND_COLOR })
-      .moveTo(-this.strokeWidth / 2, -this.strokeWidth / 2)
-      .lineTo(-this.strokeWidth / 2, this.size + this.strokeWidth / 2)
-      .lineTo(this.size + this.strokeWidth / 2, this.size + this.strokeWidth / 2)
-      .lineTo(this.size + this.strokeWidth / 2, -this.strokeWidth / 2)
+      .fill({ color: this.config.backgroundColor })
+      .moveTo(-this.config.boundaryStrokeWidth / 2, -this.config.boundaryStrokeWidth / 2)
+      .lineTo(
+        -this.config.boundaryStrokeWidth / 2,
+        this.config.size + this.config.boundaryStrokeWidth / 2,
+      )
+      .lineTo(
+        this.config.size + this.config.boundaryStrokeWidth / 2,
+        this.config.size + this.config.boundaryStrokeWidth / 2,
+      )
+      .lineTo(
+        this.config.size + this.config.boundaryStrokeWidth / 2,
+        -this.config.boundaryStrokeWidth / 2,
+      )
       .stroke({
-        width: this.strokeWidth,
-        color: this.strokeColor,
+        width: this.config.boundaryStrokeWidth,
+        color: this.config.boundaryStrokeColor,
       });
   }
 }
