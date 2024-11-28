@@ -17,7 +17,7 @@ export const BALL_VARIANTS: BallVariant[] = [
   { color: 0xff0066, scale: 9 }, // Hot Pink
   { color: 0xf6f6ef, scale: 11 }, // Creamy white
 ];
-export const BALL_VARIANTS_LIMIT = 5;
+export const BALL_VARIANTS_LIMIT = 4;
 
 export const BOUNDARY_STROKE_WIDTH = 10;
 export const BOUNDARY_STROKE_COLOR = 0xffffff;
