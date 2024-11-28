@@ -15,6 +15,7 @@ export class Ball extends GameObject {
 
   constructor(
     protected app: PIXI.Application,
+    private engine: Matter.Engine,
     private config: GameConfig,
     private color: number,
     private scale: number,
@@ -24,24 +25,28 @@ export class Ball extends GameObject {
     super(app);
 
     this.graphics = new PIXI.Graphics({ x });
-    this.body = Matter.Bodies.circle(isStatic ? -1000 : x, 0, this.config.ballRadius * scale, {
+    this.body = Matter.Bodies.circle(isStatic ? -10000 : x, 0, this.config.ballRadius * scale, {
       restitution: 0.4,
       friction: 0.007,
       mass: scale,
     });
     Matter.Body.setStatic(this.body, isStatic);
+    Matter.Composite.add(this.engine.world, this.body);
 
     this.draw();
   }
 
   update(): void {
-    if (!this.body.isStatic) {
-      this.graphics.position.set(this.body.position.x, this.body.position.y);
-      this.graphics.rotation = this.body.angle;
-    }
+    if (this.body.isStatic || this.graphics.destroyed) return;
+
+    this.graphics.position.set(this.body.position.x, this.body.position.y);
+    this.graphics.rotation = this.body.angle;
   }
 
   destroy(): void {
+    super.destroy();
+
+    Matter.Composite.remove(this.engine.world, this.body);
     this.graphics.destroy();
   }
 

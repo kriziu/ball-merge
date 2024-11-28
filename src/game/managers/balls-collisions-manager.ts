@@ -66,6 +66,7 @@ export class BallsCollisionsManager {
 
       const newBall = new Ball(
         this.app,
+        this.engine,
         this.config,
         nextVariant.color,
         nextVariant.scale,

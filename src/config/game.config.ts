@@ -1,7 +1,8 @@
 import { BallVariant, GameConfig } from '~/types/game.types';
 
 export const GAME_BACKGROUND_COLOR = 0x1f1f1b;
-export const GAME_SIZE = 1000;
+export const GAME_MIN_TOP_OFFSET = 200;
+export const GAME_SIZE = 800;
 
 export const BALL_RADIUS = 20;
 export const BALL_STROKE_WIDTH = 6;
@@ -18,6 +19,7 @@ export const BALL_VARIANTS: BallVariant[] = [
   { color: 0xf6f6ef, scale: 11 }, // Creamy white
 ];
 export const BALL_VARIANTS_LIMIT = 4;
+export const BALL_NEXT_VARIANTS_DISPLAY_COUNT = 3;
 
 export const BOUNDARY_STROKE_WIDTH = 10;
 export const BOUNDARY_STROKE_COLOR = 0xffffff;
@@ -27,12 +29,14 @@ export const DROP_INDICATOR_LINE_STROKE_WIDTH = 6;
 export const DROP_INDICATOR_LINE_STROKE_COLOR = 0x6d676e;
 
 export const GAME_CONFIG: GameConfig = {
+  minTopOffset: GAME_MIN_TOP_OFFSET,
   size: GAME_SIZE,
   backgroundColor: GAME_BACKGROUND_COLOR,
   ballRadius: BALL_RADIUS,
   ballStrokeWidth: BALL_STROKE_WIDTH,
   ballVariants: BALL_VARIANTS,
   ballVariantsRandomIndexLimit: BALL_VARIANTS_LIMIT,
+  ballNextVariantsDisplayCount: BALL_NEXT_VARIANTS_DISPLAY_COUNT,
   boundaryStrokeWidth: BOUNDARY_STROKE_WIDTH,
   boundaryStrokeColor: BOUNDARY_STROKE_COLOR,
   dropIndicatorLinesCount: DROP_INDICATOR_LINES_COUNT,

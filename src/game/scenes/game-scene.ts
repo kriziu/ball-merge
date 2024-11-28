@@ -37,7 +37,7 @@ export class GameScene extends Scene {
   }
 
   private setupBallsInfo(): void {
-    const ballsInfoContainer = new BallsInfo(this.app, this.config).getContainer();
+    const ballsInfoContainer = new BallsInfo(this.app, this.engine, this.config).getContainer();
 
     ballsInfoContainer.pivot.set(ballsInfoContainer.width / 2, ballsInfoContainer.height / 2);
     ballsInfoContainer.position.set(this.config.size / 2, this.config.size + 100);
@@ -47,7 +47,7 @@ export class GameScene extends Scene {
 
   private calculateOffset(): { x: number; y: number } {
     const offsetX = this.app.screen.width - this.config.size;
-    const offsetY = this.app.screen.height - this.config.size;
+    const offsetY = Math.max(this.app.screen.height - this.config.size, this.config.minTopOffset);
 
     return {
       x: offsetX / 2,

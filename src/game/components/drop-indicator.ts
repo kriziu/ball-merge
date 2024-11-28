@@ -10,7 +10,7 @@ export class DropIndicator extends Entity {
     offsetY: number;
   }[] = [];
   private distanceBetweenLines: number;
-  private x = -1000;
+  private x = -10000;
   private lineMovement = 0;
 
   constructor(

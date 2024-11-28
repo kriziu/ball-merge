@@ -3,18 +3,22 @@ import * as PIXI from 'pixi.js';
 import Matter from 'matter-js';
 
 import { BallsCollisionsManager } from './balls-collisions-manager';
+import { BallsNextVariantsInfo } from '../components/balls-next-variants-info';
 import { DropIndicator } from '../components/drop-indicator';
 import { InputManager } from '~/core/input/input-manager';
 import { Ball } from '~/game/objects/ball';
-import { GameConfig } from '~/types/game.types';
+import { BallVariant, GameConfig } from '~/types/game.types';
 import { randomPick } from '~/utils/random-pick';
 
 export class BallsManager {
+  private ballsContainer = new PIXI.Container();
   private inputManager: InputManager;
-  private currentBall: Ball | null = null;
-  private balls = new Set<Ball>();
-  private cursorX = -1000;
   private dropIndicator: DropIndicator;
+  private ballsNextVariantsInfo: BallsNextVariantsInfo;
+  private currentBall: Ball | null = null;
+  private nextBallsVariants: BallVariant[] = [];
+  private balls = new Set<Ball>();
+  private cursorX = -10000;
 
   constructor(
     protected app: PIXI.Application,
@@ -25,10 +29,15 @@ export class BallsManager {
     new BallsCollisionsManager(this.app, this.engine, this, this.config);
 
     this.inputManager = new InputManager(this.container);
-    this.setupInputs();
-
     this.dropIndicator = new DropIndicator(this.app, this.container, this.config);
-    this.currentBall = this.generateRandomBall();
+    this.ballsNextVariantsInfo = new BallsNextVariantsInfo(this.app, this.engine, this.config);
+
+    this.setupInputs();
+    this.initBallsVariants();
+    this.currentBall = this.getNextBall();
+
+    this.container.addChild(this.ballsContainer);
+    this.container.addChild(this.ballsNextVariantsInfo.getContainer());
   }
 
   getBalls(): Set<Ball> {
@@ -37,14 +46,12 @@ export class BallsManager {
 
   addBall(ball: Ball): void {
     this.balls.add(ball);
-    this.container.addChild(ball.getDisplayObject());
-    Matter.Composite.add(this.engine.world, ball.getBody());
+    this.ballsContainer.addChild(ball.getDisplayObject());
   }
 
   removeBall(ball: Ball): void {
     this.balls.delete(ball);
-    this.container.removeChild(ball.getDisplayObject());
-    Matter.Composite.remove(this.engine.world, ball.getBody());
+    ball.destroy();
   }
 
   private setupInputs(): void {
@@ -78,6 +85,7 @@ export class BallsManager {
     const currentBallParams = this.currentBall.getParams();
     const ballToDrop = new Ball(
       this.app,
+      this.engine,
       this.config,
       currentBallParams.color,
       currentBallParams.scale,
@@ -86,27 +94,55 @@ export class BallsManager {
 
     this.addBall(ballToDrop);
     this.removeBall(this.currentBall);
-    this.currentBall = this.generateRandomBall();
+    this.currentBall = this.getNextBall();
   }
 
-  private generateRandomBall(): Ball {
-    const randomVariant = randomPick(
-      this.config.ballVariants,
-      this.config.ballVariantsRandomIndexLimit,
-    );
+  private getNextBall(): Ball {
+    const nextVariant = this.getNextBallVariant();
 
-    this.cursorX = this.boundX(this.cursorX, randomVariant.scale);
+    this.cursorX = this.boundX(this.cursorX, nextVariant.scale);
 
     const newBall = new Ball(
       this.app,
+      this.engine,
       this.config,
-      randomVariant.color,
-      randomVariant.scale,
+      nextVariant.color,
+      nextVariant.scale,
       this.cursorX,
       true,
     );
-    this.container.addChild(newBall.getDisplayObject());
+    this.ballsContainer.addChild(newBall.getDisplayObject());
 
     return newBall;
+  }
+
+  private getNextBallVariant(): BallVariant {
+    const nextVariant = this.nextBallsVariants.shift();
+    this.nextBallsVariants.push(this.getRandomBallVariant());
+    this.ballsNextVariantsInfo.drawNextBallVariants(this.nextBallsVariants);
+
+    if (!nextVariant) {
+      throw new Error('No next ball variant');
+    }
+
+    return nextVariant;
+  }
+
+  private initBallsVariants(): void {
+    for (let i = 0; i < this.config.ballNextVariantsDisplayCount; i++) {
+      this.nextBallsVariants.push(this.getRandomBallVariant());
+    }
+
+    this.ballsNextVariantsInfo.drawNextBallVariants(this.nextBallsVariants);
+
+    const nextBallsInfoContainer = this.ballsNextVariantsInfo.getContainer();
+    nextBallsInfoContainer.position.set(
+      this.config.size - nextBallsInfoContainer.width,
+      -this.config.minTopOffset / 2,
+    );
+  }
+
+  private getRandomBallVariant(): BallVariant {
+    return randomPick(this.config.ballVariants, this.config.ballVariantsRandomIndexLimit);
   }
 }
