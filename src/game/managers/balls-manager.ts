@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 
 import Matter from 'matter-js';
 
-import { BALL_RADIUS, BALL_VARIANTS, GAME_SIZE } from '~/config/game.config';
+import { BALL_RADIUS, BALL_VARIANTS, BALL_VARIANTS_LIMIT, GAME_SIZE } from '~/config/game.config';
 import { InputManager } from '~/core/input/input-manager';
 import { Ball } from '~/game/objects/ball';
 import { randomPick } from '~/utils/random-pick';
@@ -78,7 +78,7 @@ export class BallsManager {
   }
 
   private generateRandomBall(): Ball {
-    const randomVariant = randomPick(BALL_VARIANTS);
+    const randomVariant = randomPick(BALL_VARIANTS, BALL_VARIANTS_LIMIT);
 
     this.cursorX = this.boundX(this.cursorX, randomVariant.scale);
 
