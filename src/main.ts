@@ -7,6 +7,8 @@ import { GameScene } from './game/scenes/game-scene';
 
 (async () => {
   const app = new PIXI.Application();
+  // @ts-expect-error PixiJS Devtools
+  globalThis.__PIXI_APP__ = app;
   const engine = Matter.Engine.create();
 
   await app.init({ background: GAME_BACKGROUND_COLOR, resizeTo: window, antialias: true });
