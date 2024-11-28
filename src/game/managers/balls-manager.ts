@@ -112,6 +112,7 @@ export class BallsManager {
       true,
     );
     this.ballsContainer.addChild(newBall.getDisplayObject());
+    this.dropIndicator.setX(this.cursorX);
 
     return newBall;
   }
