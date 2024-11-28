@@ -3,13 +3,15 @@ import * as PIXI from 'pixi.js';
 import Matter from 'matter-js';
 import { v4 as uuidv4 } from 'uuid';
 
-import { BALL_RADIUS } from '~/config/game.config';
+import { BALL_RADIUS, BALL_STROKE_WIDTH } from '~/config/game.config';
 import { GameObject } from '~/core/abstract/game-object';
+import { darkenColor } from '~/utils/darken-color';
 
 export class Ball extends GameObject {
   private graphics: PIXI.Graphics;
   private body: Matter.Body;
   private radius: number = BALL_RADIUS;
+  private strokeWidth: number = BALL_STROKE_WIDTH;
 
   readonly id: string = uuidv4();
 
@@ -62,10 +64,13 @@ export class Ball extends GameObject {
   }
 
   private draw(): void {
+    const strokeColor = darkenColor(this.color);
+
     this.graphics
       .clear()
-      .circle(0, 0, this.radius)
+      .circle(0, 0, this.radius - this.strokeWidth / this.scale / 2)
       .fill({ color: this.color })
+      .stroke({ color: strokeColor, width: this.strokeWidth / this.scale })
       .scale.set(this.scale);
   }
 }

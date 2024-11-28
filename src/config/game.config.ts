@@ -3,6 +3,7 @@ import { BallVariant } from '~/types/game.types';
 export const GAME_BACKGROUND_COLOR = 0x1f1f1b;
 export const GAME_SIZE = 1000;
 export const BALL_RADIUS = 20;
+export const BALL_STROKE_WIDTH = 6;
 export const BOUNDARY_STROKE_WIDTH = 10;
 export const BOUNDARY_STROKE_COLOR = 0xffffff;
 
