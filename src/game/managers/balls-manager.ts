@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 
 import Matter from 'matter-js';
 
-import { BALL_VARIANTS } from '~/config/game.config';
+import { BALL_RADIUS, BALL_VARIANTS, GAME_SIZE } from '~/config/game.config';
 import { InputManager } from '~/core/input/input-manager';
 import { Ball } from '~/game/objects/ball';
 import { randomPick } from '~/utils/random-pick';
@@ -27,14 +27,23 @@ export class BallsManager {
   private setupInputs(): void {
     this.inputManager.onPointerMove((x) => {
       if (this.currentBall) {
-        this.currentBall.getDisplayObject().x = x;
-        this.cursorX = x;
+        this.cursorX = this.boundX(x);
+        this.currentBall.getDisplayObject().x = this.cursorX;
       }
     });
 
     this.inputManager.onPointerDown(() => {
       this.dropCurrentBall();
     });
+  }
+
+  private boundX(x: number, scale?: number): number {
+    if (!this.currentBall) {
+      return x;
+    }
+
+    const ballRadius = (scale ?? this.currentBall.getParams().scale) * BALL_RADIUS;
+    return Math.min(Math.max(x, ballRadius), GAME_SIZE - ballRadius);
   }
 
   private dropCurrentBall(): void {
@@ -70,6 +79,8 @@ export class BallsManager {
 
   private generateRandomBall(): Ball {
     const randomVariant = randomPick(BALL_VARIANTS);
+
+    this.cursorX = this.boundX(this.cursorX, randomVariant.scale);
 
     const newBall = new Ball(
       this.app,

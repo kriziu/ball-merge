@@ -9,7 +9,7 @@ import { GameScene } from './game/scenes/game-scene';
   const app = new PIXI.Application();
   const engine = Matter.Engine.create();
 
-  await app.init({ background: GAME_BACKGROUND_COLOR, resizeTo: window });
+  await app.init({ background: GAME_BACKGROUND_COLOR, resizeTo: window, antialias: true });
   document.body.appendChild(app.canvas);
 
   app.ticker.add((ticker) => {

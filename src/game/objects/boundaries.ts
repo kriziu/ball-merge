@@ -64,12 +64,17 @@ export class Boundaries {
   private draw(): void {
     this.graphics
       .clear()
-      .rect(0, 0, this.size, this.size)
+      .rect(
+        -this.strokeWidth / 2,
+        -this.strokeWidth / 2,
+        this.size + this.strokeWidth,
+        this.size + this.strokeWidth,
+      )
       .fill({ color: GAME_BACKGROUND_COLOR })
-      .moveTo(0, 0)
-      .lineTo(0, this.size)
-      .lineTo(this.size, this.size)
-      .lineTo(this.size, 0)
+      .moveTo(-this.strokeWidth / 2, -this.strokeWidth / 2)
+      .lineTo(-this.strokeWidth / 2, this.size + this.strokeWidth / 2)
+      .lineTo(this.size + this.strokeWidth / 2, this.size + this.strokeWidth / 2)
+      .lineTo(this.size + this.strokeWidth / 2, -this.strokeWidth / 2)
       .stroke({
         width: this.strokeWidth,
         color: this.strokeColor,
