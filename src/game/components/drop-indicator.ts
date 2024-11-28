@@ -10,13 +10,13 @@ export class DropIndicator extends Entity {
     offsetY: number;
   }[] = [];
   private distanceBetweenLines: number;
-  private x = -10000;
   private lineMovement = 0;
 
   constructor(
     protected app: PIXI.Application,
     private container: PIXI.Container,
     private config: GameConfig,
+    private x: number,
   ) {
     super(app);
 

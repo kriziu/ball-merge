@@ -6,6 +6,7 @@ export const GAME_SIZE = 800;
 
 export const BALL_RADIUS = 20;
 export const BALL_STROKE_WIDTH = 6;
+export const BALL_DROP_DELAY = 500;
 export const BALL_VARIANTS: BallVariant[] = [
   { color: 0x00ffff, scale: 1 }, // Cyan
   { color: 0xff1493, scale: 1.3 }, // Deep Pink
@@ -34,6 +35,7 @@ export const GAME_CONFIG: GameConfig = {
   backgroundColor: GAME_BACKGROUND_COLOR,
   ballRadius: BALL_RADIUS,
   ballStrokeWidth: BALL_STROKE_WIDTH,
+  ballDropDelay: BALL_DROP_DELAY,
   ballVariants: BALL_VARIANTS,
   ballVariantsRandomIndexLimit: BALL_VARIANTS_LIMIT,
   ballNextVariantsDisplayCount: BALL_NEXT_VARIANTS_DISPLAY_COUNT,

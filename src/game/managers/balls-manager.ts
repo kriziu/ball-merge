@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 
+import gsap from 'gsap';
 import Matter from 'matter-js';
 
 import { BallsCollisionsManager } from './balls-collisions-manager';
@@ -18,7 +19,8 @@ export class BallsManager {
   private currentBall: Ball | null = null;
   private nextBallsVariants: BallVariant[] = [];
   private balls = new Set<Ball>();
-  private cursorX = -10000;
+  private ballDropBlocked = true;
+  private cursorX: number;
 
   constructor(
     protected app: PIXI.Application,
@@ -28,8 +30,10 @@ export class BallsManager {
   ) {
     new BallsCollisionsManager(this.app, this.engine, this, this.config);
 
+    this.cursorX = this.config.size / 2;
+
     this.inputManager = new InputManager(this.container);
-    this.dropIndicator = new DropIndicator(this.app, this.container, this.config);
+    this.dropIndicator = new DropIndicator(this.app, this.container, this.config, this.cursorX);
     this.ballsNextVariantsInfo = new BallsNextVariantsInfo(this.app, this.engine, this.config);
 
     this.setupInputs();
@@ -78,7 +82,7 @@ export class BallsManager {
   }
 
   private dropCurrentBall(): void {
-    if (!this.currentBall) {
+    if (!this.currentBall || this.ballDropBlocked) {
       return;
     }
 
@@ -98,6 +102,11 @@ export class BallsManager {
   }
 
   private getNextBall(): Ball {
+    this.ballDropBlocked = true;
+    setTimeout(() => {
+      this.ballDropBlocked = false;
+    }, this.config.ballDropDelay);
+
     const nextVariant = this.getNextBallVariant();
 
     this.cursorX = this.boundX(this.cursorX, nextVariant.scale);
@@ -111,7 +120,19 @@ export class BallsManager {
       this.cursorX,
       true,
     );
-    this.ballsContainer.addChild(newBall.getDisplayObject());
+    const ballDisplayObject = newBall.getDisplayObject();
+    ballDisplayObject.y = -this.config.minTopOffset;
+    ballDisplayObject.alpha = 0;
+    gsap.to(ballDisplayObject, {
+      alpha: 1,
+      duration: this.config.ballDropDelay / 1000 / 2,
+    });
+    gsap.to(ballDisplayObject, {
+      y: 0,
+      duration: this.config.ballDropDelay / 1000,
+    });
+
+    this.ballsContainer.addChild(ballDisplayObject);
     this.dropIndicator.setX(this.cursorX);
 
     return newBall;

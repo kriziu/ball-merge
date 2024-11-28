@@ -9,6 +9,7 @@ export interface GameConfig {
   backgroundColor: number;
   ballRadius: number;
   ballStrokeWidth: number;
+  ballDropDelay: number;
   ballVariants: BallVariant[];
   ballVariantsRandomIndexLimit: number;
   ballNextVariantsDisplayCount: number;
