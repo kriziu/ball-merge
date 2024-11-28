@@ -5,5 +5,5 @@ export abstract class Entity {
     this.app.ticker.add(this.update.bind(this));
   }
 
-  abstract update(): void;
+  abstract update(ticker: PIXI.Ticker): void;
 }

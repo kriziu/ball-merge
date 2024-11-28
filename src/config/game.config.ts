@@ -23,6 +23,8 @@ export const BOUNDARY_STROKE_WIDTH = 10;
 export const BOUNDARY_STROKE_COLOR = 0xffffff;
 
 export const DROP_INDICATOR_LINES_COUNT = 8;
+export const DROP_INDICATOR_LINE_STROKE_WIDTH = 6;
+export const DROP_INDICATOR_LINE_STROKE_COLOR = 0x6d676e;
 
 export const GAME_CONFIG: GameConfig = {
   size: GAME_SIZE,
@@ -34,4 +36,6 @@ export const GAME_CONFIG: GameConfig = {
   boundaryStrokeWidth: BOUNDARY_STROKE_WIDTH,
   boundaryStrokeColor: BOUNDARY_STROKE_COLOR,
   dropIndicatorLinesCount: DROP_INDICATOR_LINES_COUNT,
+  dropIndicatorLineStrokeWidth: DROP_INDICATOR_LINE_STROKE_WIDTH,
+  dropIndicatorLineStrokeColor: DROP_INDICATOR_LINE_STROKE_COLOR,
 };

@@ -13,4 +13,6 @@ export interface GameConfig {
   boundaryStrokeWidth: number;
   boundaryStrokeColor: number;
   dropIndicatorLinesCount: number;
+  dropIndicatorLineStrokeWidth: number;
+  dropIndicatorLineStrokeColor: number;
 }
